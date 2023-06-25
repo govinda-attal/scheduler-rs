@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package cmn.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+enum Severity {
+    SEVERITY_UNSPECIFIED = 0;
+    SEVERITY_INFO = 1;
+    SEVERITY_WARN = 2;
+    SEVERITY_ERROR = 3;
+}
+
+message RqHeader {
+    string rq_id = 1;
+    CtxRqHeader ctx_header = 3;
+    CredsRqHeader creds_header = 4;    
+}
+
+message EvtHeader {
+    string evt_id = 1;
+    string evt_code = 2;
+    string evt_type = 3;
+    string evt_sub_type = 4;
+    CtxEvtHeader ctx_header = 5;
+}
+
+message Status {
+    int32 code = 1;
+    Severity severity = 2;
+    repeated AdditionalStatus details = 3;
+}
+
+message AdditionalStatus {
+    string code = 1;
+    Severity severity = 2;
+    string message = 3;
+}
+
+message RsHeader {
+    string rs_id = 1;
+    CtxRsHeader ctx_header = 2;
+}
+
+message CredsRqHeader {
+    string subject_role = 1;
+}
+
+message CtxRqHeader {
+    google.protobuf.Timestamp client_dt = 1;
+    string svc_ident = 2;
+}
+message CtxRsHeader {
+    google.protobuf.Timestamp server_dt = 1;
+    string svc_ident = 2;
+    string rq_id = 3;
+}
+
+message CtxEvtHeader {
+    google.protobuf.Timestamp event_dt = 1;
+    string svc_ident = 2;
+}
+
+message Keys {
+    string ident = 1;
+}
+
+message EventMsg {
+    cmn.v1.EvtHeader evt_header = 1;
+    cmn.v1.Status status = 2;
+    google.protobuf.Any details = 3;
+}

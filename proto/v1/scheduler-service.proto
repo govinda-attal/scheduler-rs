@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package scheduler.v1;
+
+import "cmn-model.proto";
+import "scheduler-model.proto";
+
+message RegisterSchedulesRequest {
+    cmn.v1.RqHeader rq_header = 1;
+    string bucket = 2;
+    string reference = 3;
+    repeated ScheduleInfo schedules = 4;
+}
+
+message RegisterSchedulesResponse {
+    cmn.v1.RsHeader rs_header = 1;
+    cmn.v1.Status status = 2;
+    string bucket = 3;
+    string reference = 4;
+    repeated ScheduleRec schedules = 5;
+}
+
+message CloseSchedulesRequest {
+    cmn.v1.RqHeader rq_header = 1;
+    string bucket = 2;
+    string reference = 3;
+}
+
+message CloseSchedulesResponse {
+    cmn.v1.RsHeader rs_header = 1;
+    cmn.v1.Status status = 2;
+    string bucket = 3;
+    string reference = 4;
+    repeated ScheduleRec schedules = 5;
+}
+
+message ApplyScheduleActionRequest {
+    cmn.v1.RqHeader rq_header = 1;
+    ScheduleKeys keys = 2;
+    ActionInfo info = 3;
+}
+
+message ApplyScheduleActionResponse {
+    cmn.v1.RsHeader rs_header = 1;
+    cmn.v1.Status status = 2;
+    ScheduleRec rec = 3;
+}
+
+message RemoveScheduleActionRequest {
+    cmn.v1.RqHeader rq_header = 1;
+    ScheduleKeys keys = 2;
+}
+
+message RemoveScheduleActionResponse {
+    cmn.v1.RsHeader rs_header = 1;
+    cmn.v1.Status status = 2;
+    ScheduleRec rec = 3;
+}
+
+message ScheduleEvent {
+    cmn.v1.EvtHeader evt_header = 1;
+    cmn.v1.Status status = 2;
+    ScheduleRec details = 3;
+}
+
+service ManagementService {
+    rpc RegisterSchedules (RegisterSchedulesRequest) returns (RegisterSchedulesResponse);
+    rpc CloseSchedules (CloseSchedulesRequest) returns (CloseSchedulesResponse);
+    rpc ApplyScheduleAction (ApplyScheduleActionRequest) returns (ApplyScheduleActionResponse);
+    rpc RemoveScheduleAction (RemoveScheduleActionRequest) returns (RemoveScheduleActionResponse);
+}

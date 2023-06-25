@@ -1,0 +1,21 @@
+kafka:
+  brokers:
+    - redpanda:29092
+  protobuf:
+    enabled: true
+    mappings:
+      - topicName: v1.scheduleRecs
+        valueProtoType: scheduler.v1.ScheduleRec
+        keyProtoType: scheduler.v1.ScheduleKeys
+    fileSystem:
+      enabled: true
+      refreshInterval: 5m # 5min is the default refresh interval
+      paths:
+        - /etc/protos
+    importPaths:
+      - /etc/protos
+
+redpanda:
+  adminApi:
+    enabled: true
+    urls: ["http://redpanda:9644"]

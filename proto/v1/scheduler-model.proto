@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package scheduler.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message ScheduleInfo {
+    string name = 1;
+    bool one_off = 2;
+    oneof run {
+        OccurenceSpec occurence = 3;
+        ReccurenceSpec reccurence = 4;
+    }
+    repeated string job_codes = 5;
+    repeated string dependencies = 6;
+}
+
+message OccurenceSpec {
+    google.protobuf.Timestamp date_time = 1;
+    repeated string conditions = 2;
+}
+
+message ReccurenceSpec {
+    string expr = 1;
+    google.protobuf.Timestamp start = 2;
+    google.protobuf.Timestamp end = 3;
+    repeated string conditions = 4;
+}
+
+
+message ScheduleRec {
+    ScheduleKeys keys = 1;
+    ScheduleInfo info = 4;
+    Status status = 5;
+    ActionInfo action_info = 6;
+}
+
+enum Status {
+    STATUS_UNSPECIFIED=0;
+    STATUS_ACTIVE = 1;
+    STATUS_PAUSED = 2;
+    STATUS_INACTIVE = 3;
+    STATUS_CLOSED = 4;
+    STATUS_FAILED = 5;
+}
+
+message ScheduleKeys {
+    string name = 1;
+    string bucket = 2;
+    string reference = 3;
+}
+
+enum Action {
+    ACTION_UNSPECIFIED=0;
+    ACTION_PAUSE = 1;
+    ACTION_SKIP = 2;
+}
+
+message ActionInfo {
+    Action action = 1;
+    google.protobuf.Timestamp start_dt = 2;
+    google.protobuf.Timestamp end_dt = 3;
+}
