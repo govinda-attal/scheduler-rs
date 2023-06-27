@@ -30,9 +30,9 @@ message ReccurenceSpec {
 
 message ScheduleRec {
     ScheduleKeys keys = 1;
-    ScheduleInfo info = 4;
-    Status status = 5;
-    ActionInfo action_info = 6;
+    ScheduleInfo info = 2;
+    Status status = 3;
+    repeated ActionRec action_recs = 4;
 }
 
 enum Status {
@@ -60,4 +60,23 @@ message ActionInfo {
     Action action = 1;
     google.protobuf.Timestamp start_dt = 2;
     google.protobuf.Timestamp end_dt = 3;
+}
+
+
+message ActionRec {
+    ActionKeys keys = 1;
+    ActionInfo info = 2;
+    ActionStatus status = 3;
+}
+
+message ActionKeys {
+    string id = 1;
+}
+
+enum ActionStatus {
+    ACTION_STATUS_UNSPECIFIED=0;
+    ACTION_STATUS_OPEN = 1;
+    ACTION_STATUS_CANCELLED = 2;
+    ACTION_STATUS_APPLIED = 3;
+    ACTION_STATUS_FAILED = 4;
 }

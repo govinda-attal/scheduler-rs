@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::api::scheduler::v1::{CancelScheduleActionsRequest, CancelScheduleActionsResponse};
 use crate::db::mgm::ScheduleManagement;
 use crate::db::model::Schedule;
 use crate::prelude::*;
@@ -7,7 +8,6 @@ use api_spec_v1::management_service_server::ManagementService;
 use api_spec_v1::{
     ApplyScheduleActionRequest, ApplyScheduleActionResponse, CloseSchedulesRequest,
     CloseSchedulesResponse, RegisterSchedulesRequest, RegisterSchedulesResponse,
-    RemoveScheduleActionRequest, RemoveScheduleActionResponse,
 };
 use async_trait::async_trait;
 use sqlx::types::Json;
@@ -74,11 +74,11 @@ where
         Ok(Response::new(rs))
     }
 
-    async fn remove_schedule_action(
+    async fn cancel_schedule_actions(
         &self,
-        rs: Request<RemoveScheduleActionRequest>,
-    ) -> RpcResult<RemoveScheduleActionResponse> {
-        let rs = RemoveScheduleActionResponse::default();
+        rs: Request<CancelScheduleActionsRequest>,
+    ) -> RpcResult<CancelScheduleActionsResponse> {
+        let rs: CancelScheduleActionsResponse = CancelScheduleActionsResponse::default();
         Ok(Response::new(rs))
     }
 }

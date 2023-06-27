@@ -60,7 +60,7 @@ impl From<Schedule> for ScheduleRec {
                 run: Some(s.run_spec.0.into()),
             }),
             status: api_spec_v1::Status::from(s.status) as i32,
-            action_info: None,
+            action_recs: vec![],
         }
     }
 }

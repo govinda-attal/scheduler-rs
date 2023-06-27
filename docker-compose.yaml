@@ -11,12 +11,16 @@ services:
       - "--entrypoints.web.address=:80"
       - "--api.dashboard=true"
       - "--api.insecure=true"
+      - "--entrypoints.postgres.address=:5432"
+      - "--entrypoints.redpanda.address=:9092"
     networks:
     - default
     
     ports:
       - "80:80"
       - "8080:8080"
+      - "9092:9092"
+      - "5432:5432"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
@@ -25,8 +29,8 @@ services:
     hostname: rpui
     restart: always  # optional
     image: docker.redpanda.com/redpandadata/console:latest
-    ports:
-    - 9080:9080
+    # ports:
+    # - 9080:9080
     environment:
     - SERVER_LISTENPORT=9080
     # - KAFKA_BROKERS=redpanda:29092
@@ -41,9 +45,9 @@ services:
     - default
     labels:
     - "traefik.enable=true"
-    - "traefik.docker.network=frontend"
     - "traefik.http.routers.rpui.rule=(Host(`rpui.localhost`))"
     - "traefik.http.routers.rpui.entrypoints=web"
+    - "traefik.http.services.rpui.loadbalancer.server.port=9080"
 
 
   redpanda:
@@ -69,12 +73,15 @@ services:
     - PLAINTEXT://0.0.0.0:28082,OUTSIDE://0.0.0.0:8082
     - --advertise-pandaproxy-addr
     - PLAINTEXT://redpanda:28082,OUTSIDE://localhost:8082
-    ports:
-    - 9092:9092
+    # ports:
+    # - 9092:9092
     networks:
     - default
     labels:
-    - "traefik.enable=false"
+    - "traefik.enable=true"
+    - "traefik.tcp.routers.redpanda.rule=HostSNI(`*`)"
+    - "traefik.tcp.routers.redpanda.entrypoints=redpanda"
+    - "traefik.tcp.services.redpanda.loadbalancer.server.port=9092"
 
   postgres:
     image: postgres:14.1-alpine
@@ -84,20 +91,23 @@ services:
     environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
-    ports:
-    - 5432:5432
+    # ports:
+    # - 5432:5432
     networks:
     - default
     labels:
-    - "traefik.enable=false"
+    - "traefik.enable=true"
+    - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+    - "traefik.tcp.routers.postgres.entrypoints=postgres"
+    - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 
   pgweb:
     container_name: pgweb  # optional
     hostname: pgweb
     restart: always  # optional
     image: sosedoff/pgweb
-    ports: 
-    - "8081:8081" 
+    # ports: 
+    # - "8081:8081" 
     environment:
     - PGWEB_DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable
     depends_on:
@@ -109,6 +119,7 @@ services:
     - "traefik.enable=true"
     - "traefik.http.routers.pgweb.rule=(Host(`pgweb.localhost`))"
     - "traefik.http.routers.pgweb.entrypoints=web"
+    - "traefik.http.services.pgweb.loadbalancer.server.port=8081"
   
 networks:
   default:

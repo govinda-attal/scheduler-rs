@@ -36,25 +36,28 @@ message CloseSchedulesResponse {
 
 message ApplyScheduleActionRequest {
     cmn.v1.RqHeader rq_header = 1;
-    ScheduleKeys keys = 2;
+    ScheduleKeys schedule_keys = 2;
     ActionInfo info = 3;
 }
 
 message ApplyScheduleActionResponse {
     cmn.v1.RsHeader rs_header = 1;
     cmn.v1.Status status = 2;
-    ScheduleRec rec = 3;
+    ScheduleKeys schedule_keys = 3;
+    ActionRec rec = 4;
 }
 
-message RemoveScheduleActionRequest {
+message CancelScheduleActionsRequest {
     cmn.v1.RqHeader rq_header = 1;
-    ScheduleKeys keys = 2;
+    ScheduleKeys schedule_keys = 2;
+    repeated ActionKeys action_keys = 3;
 }
 
-message RemoveScheduleActionResponse {
+message CancelScheduleActionsResponse {
     cmn.v1.RsHeader rs_header = 1;
     cmn.v1.Status status = 2;
-    ScheduleRec rec = 3;
+    ScheduleKeys schedule_keys = 3;
+    repeated ActionRec recs = 4;
 }
 
 message ScheduleEvent {
@@ -67,5 +70,5 @@ service ManagementService {
     rpc RegisterSchedules (RegisterSchedulesRequest) returns (RegisterSchedulesResponse);
     rpc CloseSchedules (CloseSchedulesRequest) returns (CloseSchedulesResponse);
     rpc ApplyScheduleAction (ApplyScheduleActionRequest) returns (ApplyScheduleActionResponse);
-    rpc RemoveScheduleAction (RemoveScheduleActionRequest) returns (RemoveScheduleActionResponse);
+    rpc CancelScheduleActions (CancelScheduleActionsRequest) returns (CancelScheduleActionsResponse);
 }
